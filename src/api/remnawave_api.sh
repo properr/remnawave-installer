@@ -260,6 +260,34 @@ get_config_profiles() {
     return 0
 }
 
+get_profile_inbounds() {
+    local domain_url="$1"
+    local token="$2"
+    local profile_uuid="$3"
+
+    if [ -z "$profile_uuid" ]; then
+        echo ""
+        return 0
+    fi
+
+    # Сначала пробуем взять инбаунды из списка профилей
+    local profiles_response
+    profiles_response=$(make_api_request "GET" "http://$domain_url/api/config-profiles" "$token")
+
+    local inbound_uuid
+    inbound_uuid=$(echo "$profiles_response" | jq -r --arg p "$profile_uuid" '.response.configProfiles[] | select(.uuid == $p) | .inbounds[0].uuid' 2>/dev/null)
+
+    if [ -z "$inbound_uuid" ] || [ "$inbound_uuid" = "null" ]; then
+        # Фолбэк: отдельный эндпоинт инбаундов профиля
+        local inbounds_response
+        inbounds_response=$(make_api_request "GET" "http://$domain_url/api/config-profiles/$profile_uuid/inbounds" "$token")
+        inbound_uuid=$(echo "$inbounds_response" | jq -r '.response.inbounds[0].uuid // .response[0].uuid // ""' 2>/dev/null)
+    fi
+
+    echo "$inbound_uuid"
+    return 0
+}
+
 delete_config_profile() {
     local domain_url="$1"
     local token="$2"
