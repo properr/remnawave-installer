@@ -484,6 +484,10 @@ server {
     ssl_certificate_key "/etc/nginx/ssl/$SUB_CERT_DOMAIN/privkey.pem";
     ssl_trusted_certificate "/etc/nginx/ssl/$SUB_CERT_DOMAIN/fullchain.pem";
 
+    # ВАЖНО: remnawave/subscription-page (ProxyCheckMiddleware) требует
+    # X-Forwarded-For (любое значение) + X-Forwarded-Proto: https.
+    # Без них sub-page сам закрывает соединение -> nginx 502 -> 404.
+    # Не удаляйте эти proxy_set_header!
     location / {
         proxy_http_version 1.1;
         proxy_pass http://json;
@@ -498,11 +502,13 @@ server {
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
         proxy_intercept_errors on;
+        # Вместо 444 (пустой ответ/empty reply) отдаём честный 404:
+        # поддомен всегда отвечает HTTP-статусом, а не выглядит как 502.
         error_page 400 404 500 502 @redirect;
     }
 
     location @redirect {
-        return 444;
+        return 404;
     }
 }
 
