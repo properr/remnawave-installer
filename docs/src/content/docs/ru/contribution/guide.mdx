@@ -1,0 +1,116 @@
+---
+title: Руководство по внесению изменений
+description: Как внести изменения в проект Remnawave Reverse-proxy
+---
+
+import { Steps, LinkButton, FileTree } from '@astrojs/starlight/components';
+
+## Установка Node.js и npm
+
+Чтобы внести изменения в проект Remnawave Reverse-proxy, вам необходимо установить Node.js и npm на вашу систему. Вы можете скачать и установить их с [официального сайта Node.js](https://nodejs.org/en/download/).
+
+## Установка git
+
+Если вы еще не установили git на свою систему, вы можете найти инструкции по установке на [официальном сайте git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) и страницу загрузок [git-scm.com](https://git-scm.com/downloads).
+
+## Клонирование репозитория
+
+Чтобы начать, клонируйте репозиторий Remnawave Reverse-proxy на вашу локальную машину.
+
+<Steps>
+
+1. Склонируйте репозиторий
+
+    ```bash
+    git clone https://github.com/properr/remnawave-installer
+    ```
+
+2. Перейдите в директорию проекта
+
+    ```bash
+    cd remnawave-installer/docs
+    ```
+
+</Steps>
+
+## Установка зависимостей
+
+<Steps>
+
+1. Перед тем как вы сможете собрать документацию, вам необходимо установить необходимые зависимости. Выполните следующую команду в директории `docs`.
+
+    ```bash
+    npm install
+    ```
+
+2. Чтобы собрать документацию локально, выполните следующую команду.
+
+    ```bash
+    npm run dev
+    ```
+
+</Steps>
+
+Это запустит локальный сервер разработки, и вы сможете просмотреть документацию по адресу `http://localhost:4321`.
+
+## ✨ Документация, включенная в Starlight
+
+[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+
+### 🚀 Структура проекта
+
+Внутри вашего проекта Astro + Starlight вы увидите следующие папки и файлы:
+
+<FileTree>
+
+- **docs** корневая директория документации
+    - public/
+    - src
+        - assets/
+            - en/
+            - ru/
+        - components/
+        - **content/docs** корневая (en) директория документации
+            - index.mdx
+            - **ru/** i18n файлы
+                - index.mdx
+        - styles/
+        - content.config.ts
+- astro.config.mjs
+- package.json
+- tsconfig.json
+
+</FileTree>
+
+Starlight ищет файлы `.md` или `.mdx` в директории `src/content/docs/`. Каждый файл доступен как маршрут на основе его имени.
+
+Изображения можно добавлять в `src/assets/` и встраивать в Markdown с помощью относительной ссылки.
+
+Статические ресурсы, такие как фавиконы, можно разместить в директории `public/`.
+
+### 🧞 Команды
+
+Все команды выполняются из корневой директории проекта, из терминала:
+
+| Команда                   | Действие                                         |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Устанавливает зависимости                        |
+| `npm run dev`             | Запускает локальный сервер разработки на `localhost:4321` |
+| `npm run build`           | Собирает ваш производственный сайт в `./dist/`  |
+| `npm run preview`         | Предварительный просмотр вашей сборки локально, перед развертыванием |
+| `npm run astro ...`       | Выполняет команды CLI, такие как `astro add`, `astro check` |
+| `npm run astro -- --help` | Получить помощь по использованию Astro CLI      |
+
+### 👀 Хотите узнать больше?
+
+Посмотрите [документацию Starlight](https://starlight.astro.build/), прочитайте [документацию Astro](https://docs.astro.build) или присоединяйтесь к [серверу Discord Astro](https://astro.build/chat).
+
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', textAlign: 'center' }}>
+    <LinkButton
+        href="https://starlight.astro.build"
+        icon="open-book"
+        iconPlacement="start"
+    >
+        Перейти в документацию
+    </LinkButton>
+</div>
