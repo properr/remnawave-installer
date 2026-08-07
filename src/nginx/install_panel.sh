@@ -42,8 +42,7 @@ install_panel_nginx() {
     METRICS_USER=$(generate_user)
     METRICS_PASS=$(generate_user)
 
-    JWT_AUTH_SECRET=$(openssl rand -base64 48 | tr -dc 'a-zA-Z0-9' | head -c 64)
-    JWT_API_TOKENS_SECRET=$(openssl rand -base64 48 | tr -dc 'a-zA-Z0-9' | head -c 64)
+    APP_SECRET=$(openssl rand -hex 64)
 
     cat > .env <<EOL
 ### ПРИЛОЖЕНИЕ ###
@@ -66,9 +65,9 @@ REDIS_SOCKET=/var/run/valkey/valkey.sock
 #REDIS_HOST=
 #REDIS_PORT=
 
-### JWT ###
-JWT_AUTH_SECRET=$JWT_AUTH_SECRET
-JWT_API_TOKENS_SECRET=$JWT_API_TOKENS_SECRET
+### СЕКРЕТ ПРИЛОЖЕНИЯ ###
+# Обязательный секрет (мин. 64 символа) — единый ключ приложения в Remnawave 3.x
+APP_SECRET=$APP_SECRET
 
 # Таймаут простоя сессии в панели, чтобы не логиниться каждый день.
 # Значение в часах: 12–168
