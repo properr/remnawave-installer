@@ -12,7 +12,7 @@ import starlightThemeGalaxy from 'starlight-theme-galaxy';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://wiki.egam.es',
+	site: 'https://github.com/properr/remnawave-installer',
 	vite: {
 		resolve: {
 			alias: {
