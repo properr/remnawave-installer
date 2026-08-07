@@ -55,7 +55,8 @@ install_panel_node_nginx() {
 
     APP_SECRET=$(openssl rand -hex 64)
 
-    cat > .env <<EOL
+    local env_tmp=$(mktemp)
+    cat > "$env_tmp" <<EOL
 ### ПРИЛОЖЕНИЕ ###
 APP_PORT=3000
 METRICS_PORT=3001
@@ -155,6 +156,27 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
 EOL
+
+    if [ -f .env ] && [ -s .env ]; then
+        # Панель уже установлена — сохраняем существующий .env (секреты и БД не трогаем)
+        echo -e "${COLOR_YELLOW}${LANG[ENV_EXISTS]}${COLOR_RESET}"
+        sed -i "s|^FRONT_END_DOMAIN=.*|FRONT_END_DOMAIN=$PANEL_DOMAIN|" .env
+        sed -i "s|^SUB_PUBLIC_DOMAIN=.*|SUB_PUBLIC_DOMAIN=$SUB_DOMAIN|" .env
+        grep -q '^APP_SECRET=.\+' .env || echo "APP_SECRET=$(openssl rand -hex 64)" >> .env
+        # Дополняем недостающие переменные из свежего шаблона (существующие не трогаем)
+        while IFS= read -r line; do
+            case "$line" in
+                \#*|"") continue ;;
+                *=*)
+                    key="${line%%=*}"
+                    grep -q "^${key}=" .env || echo "$line" >> .env
+                    ;;
+            esac
+        done < "$env_tmp"
+        rm -f "$env_tmp"
+    else
+        mv "$env_tmp" .env
+    fi
 
     cat > docker-compose.yml <<EOL
 x-common: &common
@@ -514,6 +536,12 @@ EOL
 
     spinner $! "${LANG[WAITING]}"
 
+    # Гарантированно открываем нужные порты (даже при переустановке)
+    ufw allow 80/tcp > /dev/null 2>&1
+    ufw allow 443/tcp > /dev/null 2>&1
+    ufw allow 2222/tcp > /dev/null 2>&1
+    ufw reload > /dev/null 2>&1
+
     remnawave_network_subnet=172.30.0.0/16
     ufw allow from "$remnawave_network_subnet" to any port 2222 proto tcp > /dev/null 2>&1
 
@@ -525,17 +553,19 @@ EOL
 
     echo -e "${COLOR_YELLOW}${LANG[CHECK_CONTAINERS]}${COLOR_RESET}"
     local attempts=0
-    local max_attempts=5
+    local max_attempts=10
     until curl -s -f --max-time 30 "http://$domain_url/api/auth/status" \
         --header 'X-Forwarded-For: 127.0.0.1' \
         --header 'X-Forwarded-Proto: https' \
         > /dev/null; do
         attempts=$((attempts + 1))
         if [ "$attempts" -ge "$max_attempts" ]; then
-            error "$(printf "${LANG[CONTAINERS_TIMEOUT]}" $max_attempts)"
+            echo -e "${COLOR_RED}$(printf "${LANG[CONTAINERS_TIMEOUT]}" $max_attempts)${COLOR_RESET}"
+            cd /opt/remnawave && docker compose logs --tail=30
+            exit 1
         fi
         echo -e "${COLOR_RED}$(printf "${LANG[CONTAINERS_NOT_READY_ATTEMPT]}" $attempts $max_attempts)${COLOR_RESET}"
-        sleep 60
+        sleep 30
     done
 
     # Регистрируем Remnawave

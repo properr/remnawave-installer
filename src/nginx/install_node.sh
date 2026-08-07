@@ -167,6 +167,10 @@ server {
 }
 EOL
 
+    ufw allow 80/tcp > /dev/null 2>&1
+    ufw allow 443/tcp > /dev/null 2>&1
+    ufw allow 2222/tcp > /dev/null 2>&1
+    ufw reload > /dev/null 2>&1
     ufw allow from $PANEL_IP to any port 2222 > /dev/null 2>&1
     ufw reload > /dev/null 2>&1
 
