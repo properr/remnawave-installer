@@ -23,6 +23,15 @@ make_api_request() {
 }
 
 
+get_node_secret_key() {
+    local domain_url=$1
+    local token=$2
+
+    local response
+    response=$(make_api_request "GET" "http://$domain_url/api/keygen" "$token")
+    echo "$response" | jq -r '.response.secretKey // ""'
+}
+
 register_remnawave() {
     local domain_url=$1
     local username=$2

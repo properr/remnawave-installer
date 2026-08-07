@@ -85,6 +85,8 @@ LANG[INSTALL_PROMPT]="Выберите действие (0-5):"
 LANG[INSTALL_INVALID_CHOICE]="Неверный выбор. Выберите 0-5."
 #Управление IPv6
 #Remna
+LANG[NODE_SECRET_SET]="Секрет ноды получен и прописан в docker-compose."
+LANG[NODE_SECRET_FAIL]="Не удалось получить секрет ноды — проверьте API-токен панели."
 LANG[NODE_443_TIMEOUT]="Нода не слушает порт 443 после установки. Логи remnanode ниже:"
 LANG[NODE_443_WAIT]="Нода ещё не слушает 443, ожидание... Попытка проверки порта."
 LANG[NODE_443_OK]="Нода слушает порт 443 — Reality-инбаунды активны."

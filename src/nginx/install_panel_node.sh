@@ -595,6 +595,16 @@ EOL
     echo -e "${COLOR_YELLOW}${LANG[CREATING_NODE]}${COLOR_RESET}"
     create_node "$domain_url" "$token" "$config_profile_uuid" "$inbound_uuid"
 
+    # Получаем секрет ноды (подписанный сертификат панели) и прописываем в docker-compose
+    local node_secret
+    node_secret=$(get_node_secret_key "$domain_url" "$token")
+    if [ -n "$node_secret" ] && [ "$node_secret" != "null" ]; then
+        awk -v s="$node_secret" '{ if ($0 ~ /SECRET_KEY=/) print "      - SECRET_KEY=\"" s "\""; else print }' docker-compose.yml > /tmp/dc.tmp && mv /tmp/dc.tmp docker-compose.yml
+        echo -e "${COLOR_GREEN}${LANG[NODE_SECRET_SET]}${COLOR_RESET}"
+    else
+        echo -e "${COLOR_RED}${LANG[NODE_SECRET_FAIL]}${COLOR_RESET}"
+    fi
+
     # Создаём хост
     echo -e "${COLOR_YELLOW}${LANG[CREATE_HOST]}${COLOR_RESET}"
     create_host "$domain_url" "$token" "$inbound_uuid" "$SELFSTEAL_DOMAIN" "$config_profile_uuid"
