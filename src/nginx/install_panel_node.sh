@@ -622,6 +622,23 @@ EOL
     docker compose up -d > /dev/null 2>&1 &
     spinner $! "${LANG[WAITING]}"
 
+    # Проверяем, что нода слушает порт 443 (Reality-инбаунды)
+    if command -v ss >/dev/null 2>&1; then
+        local port_attempts=0
+        local port_max=6
+        until ss -tln 2>/dev/null | grep -q ':443 '; do
+            port_attempts=$((port_attempts + 1))
+            if [ "$port_attempts" -ge "$port_max" ]; then
+                echo -e "${COLOR_RED}${LANG[NODE_443_TIMEOUT]}${COLOR_RESET}"
+                docker logs --tail=30 remnanode 2>/dev/null || true
+                exit 1
+            fi
+            echo -e "${COLOR_YELLOW}${LANG[NODE_443_WAIT]}${COLOR_RESET}"
+            sleep 10
+        done
+        echo -e "${COLOR_GREEN}${LANG[NODE_443_OK]}${COLOR_RESET}"
+    fi
+
     clear
 
     echo -e "${COLOR_YELLOW}=================================================${COLOR_RESET}"
