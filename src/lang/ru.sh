@@ -143,6 +143,7 @@ LANG[STARTING_NODE]="Запуск ноды"
 LANG[STOPPING_REMNAWAVE]="Остановка панели и ноды"
 LANG[IMAGES_DETECTED]="Обнаружены новые образы, перезапускаем контейнеры..."
 #Конец меню
+LANG[AEZA_PROMO]="Нужен сервер для панели или ноды? Арендуй на Aeza: https://aeza.ru/?ref=446743"
 LANG[INSTALL_COMPLETE]="               УСТАНОВКА ЗАВЕРШЕНА!"
 LANG[PANEL_ACCESS]="Панель доступна по адресу:"
 LANG[PANEL_ACCESS_PROMPT]="Выберите действие (0-2):"
