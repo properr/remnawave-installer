@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="26.8.7.11"
+SCRIPT_VERSION="26.8.7.12"
 UPDATE_AVAILABLE=false
 DIR_REMNAWAVE="/usr/local/remnawave_reverse/"
 LANG_FILE="${DIR_REMNAWAVE}selected_language"
@@ -441,6 +441,12 @@ install_script_if_missing() {
         
         chmod +x "${DIR_REMNAWAVE}remnawave_reverse"
         ln -sf "${DIR_REMNAWAVE}remnawave_reverse" /usr/local/bin/remnawave_reverse
+
+        # ВАЖНО: удаляем старые модули с диска (могут остаться от апстрима или старых версий
+        # установщика). Иначе load_module (force_update=false) подхватит устаревшие модули,
+        # например старый шаблон .env без APP_SECRET или SECRET_KEY-заглушку ноды.
+        # После чистки load_module при следующей загрузке скачает свежие модули из репозитория.
+        rm -rf "${DIR_REMNAWAVE}nginx" "${DIR_REMNAWAVE}modules" "${DIR_REMNAWAVE}api" "${DIR_REMNAWAVE}lang" 2>/dev/null
     fi
 
     local bashrc_file="/etc/bash.bashrc"
@@ -620,8 +626,8 @@ manage_install() {
                 exit 0
             fi
             
-            load_install_panel_node_module
-            load_api_module
+            load_install_panel_node_module true
+            load_api_module true
             if [ ! -f "${DIR_REMNAWAVE}install_packages" ] || ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1 || ! command -v certbot >/dev/null 2>&1; then
                 install_packages || {
                     echo -e "${COLOR_RED}${LANG[ERROR_INSTALL_DOCKER]}${COLOR_RESET}"
@@ -634,8 +640,8 @@ manage_install() {
             log_clear
             ;;
         2)
-            load_install_panel_module
-            load_api_module
+            load_install_panel_module true
+            load_api_module true
             if [ ! -f "${DIR_REMNAWAVE}install_packages" ] || ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1 || ! command -v certbot >/dev/null 2>&1; then
                 install_packages || {
                     echo -e "${COLOR_RED}${LANG[ERROR_INSTALL_DOCKER]}${COLOR_RESET}"
@@ -648,13 +654,13 @@ manage_install() {
             log_clear
             ;;
         3)
-            load_add_node_module
-            load_api_module
+            load_add_node_module true
+            load_api_module true
             add_node_to_panel
             log_clear
             ;;
         4)
-            load_install_node_module
+            load_install_node_module true
             if [ ! -f "${DIR_REMNAWAVE}install_packages" ] || ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1 || ! command -v certbot >/dev/null 2>&1; then
                 install_packages || {
                     echo -e "${COLOR_RED}${LANG[ERROR_INSTALL_DOCKER]}${COLOR_RESET}"
@@ -707,9 +713,9 @@ choose_reinstall_type() {
                         install_packages
                     fi
                     case $REINSTALL_OPTION in
-                        1) load_install_panel_node_module; load_api_module; installation ;;
-                        2) load_install_panel_module; load_api_module; installation_panel ;;
-                        3) load_install_node_module; load_api_module; installation_node ;;
+                        1) load_install_panel_node_module true; load_api_module true; installation ;;
+                        2) load_install_panel_module true; load_api_module true; installation_panel ;;
+                        3) load_install_node_module true; load_api_module true; installation_node ;;
                     esac
                     log_clear
                 else
@@ -1746,7 +1752,7 @@ load_install_node_module() { load_module "install_node" "nginx" "${1:-false}"; }
 load_add_node_module() { load_module "add_node" "modules" "${1:-false}"; }
 load_manage_panel_module() { load_module "manage_panel" "modules" "${1:-false}"; }
 load_api_module() { load_module "remnawave_api" "api" "${1:-false}"; }
-load_selfsteal_templates_module() { load_module "selfsteal_templates" "modules" "${1:-false}"; }
+load_selfsteal_templates_module() { load_module "selfsteal_templates" "modules" "${1:-true}"; }
 
 log_entry
 
