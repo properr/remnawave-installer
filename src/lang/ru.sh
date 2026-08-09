@@ -1,19 +1,19 @@
 #!/bin/bash
-#Русские переводы
+# Chinese (Simplified) translations
 
 declare -gA LANG
 
-#Псевдоним
+#Alias
 LANG[ALIAS_ADDED]="Алиас 'rr' для 'remnawave_reverse' добавлен в %s"
 LANG[ALIAS_ACTIVATE_GLOBAL]="Алиас 'rr' теперь доступен для всех пользователей. Выполните 'source %s' или перезапустите терминал, чтобы применить алиас."
-#Проверка
+#Checks
 LANG[ERROR_ROOT]="Скрипт нужно запускать с правами root"
 LANG[ERROR_OS]="Поддержка только Debian 11/12 и Ubuntu 22.04/24.04"
 LANG[MENU_TITLE]="REMNAWAVE REVERSE-PROXY by properr"
 LANG[AVAILABLE_UPDATE]="доступно обновление скрипта"
 LANG[PANEL_VERSION_LABEL]="Актуальная версия панели: %s"
 LANG[VERSION_LABEL]="Версия: %s"
-#Установка пакетов
+#Package installation
 LANG[ERROR_UPDATE_LIST]="Ошибка: Не удалось обновить список пакетов"
 LANG[ERROR_INSTALL_PACKAGES]="Ошибка: Не удалось установить необходимые пакеты"
 LANG[ERROR_INSTALL_CRON]="Ошибка: Не удалось установить cron"
@@ -27,16 +27,16 @@ LANG[ERROR_CONFIGURE_UFW]="Ошибка: Не удалось настроить 
 LANG[ERROR_CONFIGURE_UPGRADES]="Ошибка: Не удалось настроить unattended-upgrades"
 LANG[ERROR_INSTALL_CERTBOT]="Ошибка: Не удалось установить certbot"
 LANG[SUCCESS_INSTALL]="Все пакеты успешно установлены"
-#Предупреждение об установке Панель+Нода
+#Panel+Node installation warning
 LANG[PANEL_NODE_SINGLE_SERVER_WARNING]="Этот способ установки не рекомендуется для использования в производственных средах, поскольку он отсутствует в официальной документации Remnawave."
 LANG[PANEL_NODE_SINGLE_SERVER_RECOMMENDATION]="Для оптимального результата и стабильной работы, пожалуйста, выбирайте методы установки Только панель или Только нода в зависимости от ваших потребностей."
 LANG[CONFIRM_CONTINUE]="Продолжить? (y/n):"
-#Обновление скрипта
+#Script update
 LANG[UPDATING_LANG_FILES]="Обновление языковых файлов..."
 LANG[LANG_FILE_UPDATED]="✓ %s обновлён"
 LANG[LANG_FILE_UPDATE_FAILED]="✗ Не удалось обновить %s"
 LANG[UPDATING_MODULES]="Обновление модулей..."
-#Главное меню
+#Main menu
 LANG[EXIT]="Выход"
 LANG[MENU_1]="Установка компонентов Remnawave"
 LANG[MENU_2]="Переустановить панель/ноду"
@@ -50,16 +50,16 @@ LANG[WARNING_LABEL]="ВНИМАНИЕ:"
 LANG[CONFIRM_PROMPT]="Введите 'y' для продолжения или 'n' для выхода (y/n):"
 LANG[WARNING_NODE_PANEL]="Добавление ноды должно выполняться только на сервере, где установлена панель, а не на сервере ноды."
 LANG[CONFIRM_SERVER_PANEL]="Вы уверены, что находитесь на сервере с установленной панелью?"
-#Удаление скрипта
+#Script removal
 LANG[REMOVE_SCRIPT_ONLY]="Удалить скрипт и его локальные файлы"
 LANG[REMOVE_SCRIPT_AND_PANEL]="Удалить скрипт и данные панели/ноды remnawave"
 LANG[CONFIRM_REMOVE_SCRIPT]="Все данные скрипта будут удалены с сервера. Вы уверены? (y/n): "
 LANG[CONFIRM_REMOVE_ALL]="Все данные скрипта и панели/ноды будут удалены с сервера. Вы уверены? (y/n): "
 LANG[SCRIPT_REMOVED]="Скрипт и его локальные файлы успешно удалены!"
 LANG[ALL_REMOVED]="Скрипт и данные панели/ноды успешно удалены!"
-#Расширения от distillium
-#Warp от distillium
-#Управление панелью/нодой
+#distillium extensions
+#distillium Warp
+#Panel/node management
 LANG[START_PANEL_NODE]="Запустить панель/ноду"
 LANG[STOP_PANEL_NODE]="Остановить панель/ноду"
 LANG[UPDATE_PANEL_NODE]="Обновить панель/ноду"
@@ -68,14 +68,14 @@ LANG[REMNAWAVE_CLI]="Remnawave CLI"
 LANG[ACCESS_PANEL]="Доступ к панели через порт 8443 (только для панели + ноды)"
 LANG[MANAGE_PANEL_NODE_PROMPT]="Выберите действие (0-6):"
 LANG[MANAGE_PANEL_NODE_INVALID_CHOICE]="Неверный выбор. Выберите 0-6."
-#Управление сертификатами
+#Manage certificates
 LANG[CERT_UPDATE]="Обновить текущие сертификаты"
 LANG[CERT_GENERATE]="Сгенерировать новые сертификаты для другого домена"
 LANG[CERT_PROMPT1]="Выберите действие (0-2):"
 LANG[CERT_INVALID_CHOICE]="Неверный выбор. Выберите 0-2."
 LANG[CERT_UPDATE_SUCCESS]="Сертификаты успешно обновлены."
 LANG[CERT_GENERATE_PROMPT]="Введите домен для новых сертификатов (например, example.com):"
-#Установка компонентов Remnawave
+#Remnawave component installation
 LANG[INSTALL_MENU_TITLE]="Установка компонентов Remnawave"
 LANG[INSTALL_PANEL_NODE]="Установить панель и ноду на один сервер"
 LANG[INSTALL_PANEL]="Установить только панель"
@@ -83,7 +83,7 @@ LANG[INSTALL_ADD_NODE]="Добавить ноду в панель"
 LANG[INSTALL_NODE]="Установить только ноду"
 LANG[INSTALL_PROMPT]="Выберите действие (0-5):"
 LANG[INSTALL_INVALID_CHOICE]="Неверный выбор. Выберите 0-5."
-#Управление IPv6
+#IPv6 management
 #Remna
 LANG[NODE_SECRET_SET]="Секрет ноды получен и прописан в docker-compose."
 LANG[NODE_SECRET_FAIL]="Не удалось получить секрет ноды — проверьте API-токен панели."
@@ -133,7 +133,7 @@ LANG[NO_VALID_SQUADS_FOUND]="Нет валидных сквадов"
 LANG[ERROR_GET_SQUAD]="Не удалось получить сквад"
 LANG[INVALID_SQUAD_UUID]="Неверный UUID сквада"
 LANG[INVALID_INBOUND_UUID]="Неверный UUID входа"
-#Остановка/Запуск/Обновление
+#Stop/Start/Update
 LANG[CHANGE_DIR_FAILED]="Не удалось перейти в директорию %s"
 LANG[DIR_NOT_FOUND]="Директория /opt/remnawave или /opt/remnanode не найдена"
 LANG[PANEL_RUNNING]="Панель/нода уже запущена"
@@ -148,7 +148,7 @@ LANG[STARTING_PANEL]="Запуск панели"
 LANG[STARTING_NODE]="Запуск ноды"
 LANG[STOPPING_REMNAWAVE]="Остановка панели и ноды"
 LANG[IMAGES_DETECTED]="Обнаружены новые образы, перезапускаем контейнеры..."
-#Конец меню
+#End of menu
 LANG[AEZA_PROMO]="Нужен сервер для панели или ноды? Арендуй на Aeza: https://aeza.ru/?ref=446743"
 LANG[INSTALL_COMPLETE]="               УСТАНОВКА ЗАВЕРШЕНА!"
 LANG[PANEL_ACCESS]="Панель доступна по адресу:"
@@ -164,7 +164,7 @@ LANG[UNPACK_ERROR]="Ошибка распаковки архива"
 LANG[RANDOM_TEMPLATE]="Установка случайного шаблона для маскировочного сайта"
 LANG[TEMPLATE_COPY]="Шаблон скопирован в /var/www/html/"
 LANG[SELECT_TEMPLATE]="Выбран шаблон:"
-#Ошибка
+#Error
 LANG[ERROR_TOKEN]="Не удалось получить токен."
 LANG[ERROR_PUBLIC_KEY]="Не удалось получить публичный ключ."
 LANG[ERROR_EXTRACT_PUBLIC_KEY]="Не удалось извлечь публичный ключ из ответа."
@@ -181,7 +181,7 @@ LANG[ERROR_REGISTER]="Ошибка регистрации"
 LANG[ERROR_UPDATE_SQUAD]="Ошибка обновления squad"
 LANG[ERROR_GET_SQUAD_LIST]="Ошибка получения списка squadов"
 LANG[NO_SQUADS_TO_UPDATE]="Нет сквадов для обновления"
-#Переустановка панели/ноды
+#Panel/node reinstall
 LANG[REINSTALL_WARNING]="Все данные панели/ноды будут удалены с сервера. Вы уверены? (y/n):"
 LANG[REINSTALL_TYPE_TITLE]="Выберите способ переустановки:"
 LANG[REINSTALL_PROMPT]="Выберите действие (0-3):"
@@ -193,7 +193,7 @@ LANG[IP_ERROR]="Введите корректный IP-адрес в форма�
 LANG[CERT_PROMPT]="Введите Secret Key ноды, который находится в карточке редактирования ноды (вставьте содержимое и 2 раза нажмите Enter):"
 LANG[CERT_CONFIRM]="Вы уверены, что сертификат правильный? (y/n):"
 LANG[ABORT_MESSAGE]="Установка прервана пользователем"
-#Установка только ноды (Remnawave 3.x): автологин/API-токен, автосоздание ноды
+#Node-only installation (Remnawave 3.x): auto-login/API token, auto node creation
 LANG[NODE_SECRET_PROMPT]="Введите Secret Key ноды, если он уже есть (панель Remnawave 2.x). Оставьте пустым и нажмите Enter, чтобы установщик сам создал ноду в панели и получил секрет через API (Remnawave 3.x):"
 LANG[NODE_MANUAL_SECRET_USED]="Используем введённый вручную Secret Key (режим совместимости с панелью 2.x)."
 LANG[NODE_API_TOKEN_PROMPT]="Введите API-токен панели (Settings -> API Tokens). Оставьте пустым, чтобы войти логином и паролем суперадмина: "
@@ -209,14 +209,14 @@ LANG[NODE_ADDRESS_INFO]="IP-адрес ноды для панели: %s"
 LANG[NODE_PROFILE_NOT_FOUND]="Профиль Default-Profile в панели не найден."
 LANG[NODE_PROFILE_INBOUND_NOT_FOUND]="Не удалось получить инбаунды профиля."
 LANG[NODE_CREATED_SIMPLE]="Нода создана без привязки профиля — назначьте профиль в карточке ноды в панели."
-#Проверка ноды
+#Node check
 LANG[NODE_CHECK]="Проверка подключения ноды для %s..."
 LANG[NODE_ATTEMPT]="Попытка %d из %d..."
 LANG[NODE_UNAVAILABLE]="Нода недоступна на попытке %d."
 LANG[NODE_LAUNCHED]="Нода успешно подключена!"
 LANG[NODE_NOT_CONNECTED]="Нода не подключена после %d попыток!"
 LANG[CHECK_CONFIG]="Проверьте конфигурацию или перезапустите панель."
-#Добавление ноды в панель
+#Add node to panel
 LANG[ADD_NODE_TO_PANEL]="Добавить ноду в панель"
 LANG[ENTER_NODE_NAME]="Введите имя для вашей ноды (например, Germany):"
 LANG[USING_SAVED_TOKEN]="Используем сохранённый токен..."
@@ -233,7 +233,7 @@ LANG[CREATE_NEW_NODE]="Создаём новую ноду для %s"
 LANG[CF_INVALID_NAME]="Ошибка: Имя конфигурационного профиля %s уже используется.\nПожалуйста, выберите другое имя."
 LANG[CF_INVALID_LENGTH]="Ошибка: Имя конфигурационного профиля должно содержать от 3 до 20 символов."
 LANG[CF_INVALID_CHARS]="Ошибка: Имя конфигурационного профиля должно содержать только английские буквы, цифры и дефис."
-#проверка
+#check
 LANG[GENERATING_CERTS]="Генерируем сертификаты для %s"
 LANG[REQUIRED_DOMAINS]="Требуемые домены для сертификатов:"
 LANG[CHECK_DOMAIN_IP_FAIL]="Не удалось определить IP-адрес домена или сервера."
@@ -242,7 +242,7 @@ LANG[CHECK_DOMAIN_CLOUDFLARE]="Домен %s указывает на IP Cloudfla
 LANG[CHECK_DOMAIN_CLOUDFLARE_INSTRUCTION]="Проксирование Cloudflare недопустимо для selfsteal домена. Отключите проксирование (переключите в режим 'DNS Only')."
 LANG[CHECK_DOMAIN_MISMATCH]="Домен %s указывает на IP-адрес %s, который отличается от IP этого сервера (%s)."
 LANG[CHECK_DOMAIN_MISMATCH_INSTRUCTION]="Для корректной работы домен должен указывать на текущий сервер."
-#обновление
+#update
 LANG[UPDATE_AVAILABLE]="Доступна новая версия скрипта: %s (текущая версия: %s)."
 LANG[UPDATE_CONFIRM]="Обновить скрипт? (y/n):"
 LANG[UPDATE_CANCELLED]="Обновление отменено пользователем."
@@ -257,7 +257,7 @@ LANG[RUNNING_CLI]="Запуск Remnawave CLI..."
 LANG[CLI_SUCCESS]="Remnawave CLI успешно выполнен!"
 LANG[CLI_FAILED]="Не удалось выполнить Remnawave CLI. Убедитесь, что контейнер 'remnawave' запущен."
 LANG[CONTAINER_NOT_RUNNING]="Контейнер 'remnawave' не запущен. Пожалуйста, запустите его сначала."
-#Выбор сертификата
+#Certificate selection
 LANG[CERT_METHOD_PROMPT]="Выберите метод генерации сертификатов для всех доменов:"
 LANG[CERT_METHOD_CF]="Cloudflare API (поддерживает wildcard)"
 LANG[CERT_METHOD_ACME]="ACME HTTP-01 (один домен, без wildcard)"
@@ -278,7 +278,7 @@ LANG[WILDCARD_CERT_FOUND]="Wildcard-сертификат найден в /etc/le
 LANG[FOR_DOMAIN]="для"
 LANG[START_CRON_ERROR]="Не удалось запустить cron. Пожалуйста, запустите его вручную."
 LANG[DOMAINS_MUST_BE_UNIQUE]="Ошибка: Все домены (панель, подписка, и нода) должны быть уникальными."
-#Управление доступом к панели
+#Panel access management
 LANG[PORT_8443_OPEN]="Открыть доступ к панели на порту 8443"
 LANG[PORT_8443_CLOSE]="Закрыть доступ к панели на порту 8443"
 LANG[PORT_8443_IN_USE]="Порт 8443 уже занят другим процессом. Проверьте, какие службы используют порт, и освободите его."
@@ -292,9 +292,9 @@ LANG[NGINX_CONF_MODIFY_FAILED]="Не удалось изменить конфи�
 LANG[UFW_RELOAD_FAILED]="Не удалось перезагрузить UFW."
 LANG[PORT_8443_ALREADY_CLOSED]="Порт 8443 уже закрыт в UFW."
 LANG[PORT_8443_NOT_CONFIGURED]="Порт 8443 не настроен в конфигурации."
-#Расширения Legiz
-# Загрузка страницы подписок
-# Свой брендинг
+#Legiz extensions
+# Subscription page loading
+# Custom branding
 LANG[RENEWAL_CONF_NOT_FOUND]="Файл конфигурации обновления сертификатов не найден."
 LANG[ARCHIVE_DIR_MISMATCH]="Несоответствие директории архива в конфигурации."
 LANG[CERT_VERSION_NOT_FOUND]="Не удалось определить версию сертификатов."
@@ -328,4 +328,4 @@ LANG[UPDATED_RENEW_AUTH]="Обновлён hook обновления серти�
 LANG[ERROR_CREATE_CONFIG_PROFILE]="Ошибка создания профиля конфигурации"
 LANG[ERROR_EXTRACT_PRIVATE_KEY]="Не удалось извлечь приватный ключ"
 LANG[INVALID_CERT_METHOD]="Неверный метод получения сертификата"
-#Выбор веб-сервера
+#Web server selection

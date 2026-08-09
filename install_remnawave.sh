@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="26.8.9.8"
+SCRIPT_VERSION="26.8.9.9"
 UPDATE_AVAILABLE=false
 DIR_REMNAWAVE="/usr/local/remnawave_reverse/"
 LANG_FILE="${DIR_REMNAWAVE}selected_language"
@@ -14,13 +14,13 @@ COLOR_WHITE="\033[1;38;2;248;248;248m"
 COLOR_RED="\033[1;38;2;207;106;76m"
 COLOR_GRAY='\033[0;38;2;155;133;157m'
 
-# Скачивание файла с нескольких зеркал и проверкой
+# Download a file from multiple mirrors with validation
 download_with_mirrors() {
     local file_url="$1"
     local dest_file="$2"
     local file_type="${3:-script}"  # script, lang, module
     
-    # URL зеркал (прокси для raw-контента GitHub)
+    # Mirror URLs (proxies for GitHub raw content)
     local mirrors=(
         "$file_url"
         "https://cdn.jsdelivr.net/gh/properr/remnawave-installer@main/${file_url#*main/}"
@@ -32,12 +32,12 @@ download_with_mirrors() {
     local download_success=false
     local http_code=""
     
-    # Пробуем каждое зеркало
+    # Try each mirror
     for mirror_url in "${mirrors[@]}"; do
         if command -v curl &> /dev/null; then
             http_code=$(curl -sL -w "%{http_code}" --connect-timeout 10 --max-time 30 "$mirror_url" -o "$temp_file" 2>/dev/null)
             if [ "$http_code" = "200" ] && [ -s "$temp_file" ]; then
-                # Проверяем содержимое файла
+                # Validate file content
                 if validate_downloaded_file "$temp_file" "$file_type"; then
                     download_success=true
                     break
@@ -66,7 +66,7 @@ download_with_mirrors() {
     fi
 }
 
-# Проверка содержимого скачанного файла
+# Validate downloaded file content
 validate_downloaded_file() {
     local file="$1"
     local file_type="$2"
@@ -75,7 +75,7 @@ validate_downloaded_file() {
         return 1
     fi
     
-    # Проверка на HTTP-ошибки и ошибки rate limit
+    # Check for HTTP errors and rate limit errors
     if grep -q "429" "$file" && grep -q "Too Many Requests" "$file"; then
         return 1
     fi
@@ -84,19 +84,19 @@ validate_downloaded_file() {
         return 1
     fi
     
-    # Проверка предупреждений Terms of Service (предупреждение GitHub о скрейпинге)
+    # Check for Terms of Service warnings (GitHub scraping notice)
     if grep -q "Terms of Service" "$file" && grep -q "scraping" "$file"; then
         return 1
     fi
     
-    # Для bash-скриптов проверяем корректный shebang
+    # For bash scripts, verify a valid shebang
     if [[ "$file_type" == "script" ]] || [[ "$file_type" == "lang" ]] || [[ "$file_type" == "module" ]]; then
         if ! head -1 "$file" | grep -q "^#!/bin/bash"; then
             return 1
         fi
     fi
     
-    # Для языковых файлов проверяем объявление массива LANG
+    # For language files, verify the LANG array declaration
     if [ "$file_type" = "lang" ]; then
         if ! grep -q "declare -gA LANG" "$file"; then
             return 1
@@ -107,13 +107,35 @@ validate_downloaded_file() {
 }
 
 load_language() {
-    set_language ru
-    return 0
+    local selected=""
+    if [ -f "$LANG_FILE" ]; then
+        selected=$(cat "$LANG_FILE" 2>/dev/null | tr -d ' \n')
+    fi
+    if [ -z "$selected" ]; then
+        echo -e "${COLOR_GREEN}=================================================${COLOR_RESET}"
+        echo -e "${COLOR_YELLOW}Select language / Выберите язык / 选择语言${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}=================================================${COLOR_RESET}"
+        echo -e "${COLOR_WHITE}1. English${COLOR_RESET}"
+        echo -e "${COLOR_WHITE}2. Русский${COLOR_RESET}"
+        echo -e "${COLOR_WHITE}3. 简体中文${COLOR_RESET}"
+        echo ""
+        reading "Select language (1-3):" lang_choice
+        case $lang_choice in
+            2) selected="ru" ;;
+            3) selected="zh-CN" ;;
+            *) selected="en" ;;
+        esac
+        mkdir -p "$DIR_REMNAWAVE"
+        echo "$selected" > "$LANG_FILE"
+    fi
+    set_language "$selected"
 }
 
-# Языковые переменные (только русский)
+# Language selection menu labels (used before load_language)
 declare -gA LANG=(
+    [LANG_EN]="English"
     [LANG_RU]="Русский"
+    [LANG_ZH]="简体中文"
 )
 
 
@@ -129,9 +151,9 @@ set_language() {
          local lang_url="${LANG_BASE_URL}/${lang}.sh"
          mkdir -p "${DIR_REMNAWAVE}lang"
          
-         # Используем download_with_mirrors для надёжного скачивания
+         # Use download_with_mirrors for reliable download
          if ! download_with_mirrors "$lang_url" "$lang_file" "lang"; then
-             # Запасной вариант: прямое скачивание, если зеркала не сработали
+             # Fallback: direct download if mirrors failed
              if command -v curl &> /dev/null; then
                  curl -sL "$lang_url" -o "$lang_file" 2>/dev/null
              elif command -v wget &> /dev/null; then
@@ -143,7 +165,7 @@ set_language() {
      if [ -f "$lang_file" ]; then
          source "$lang_file"
      else
-         # Аварийный запасной вариант: скачиваем русский язык с зеркал
+         # Emergency fallback: download Russian language from mirrors
          local ru_url="${LANG_BASE_URL}/ru.sh"
          local temp_ru_file="${DIR_REMNAWAVE}lang/ru_temp.sh"
          
@@ -151,7 +173,7 @@ set_language() {
              source "$temp_ru_file"
              mv "$temp_ru_file" "${DIR_REMNAWAVE}lang/ru.sh"
          else
-             # Крайний случай: прямое скачивание
+             # Last resort: direct download
              if command -v curl &> /dev/null; then
                  source <(curl -sL "$ru_url" 2>/dev/null)
              elif command -v wget &> /dev/null; then
@@ -229,18 +251,21 @@ update_remnawave_reverse() {
 
     mkdir -p "${DIR_REMNAWAVE}"
 
-    local current_lang="ru"
+    local current_lang="en"
+    if [ -f "$LANG_FILE" ]; then
+        current_lang=$(cat "$LANG_FILE" 2>/dev/null | tr -d ' \n')
+    fi
 
-	#Обновление LANG
+	#Update LANG
     echo -e "${COLOR_YELLOW}${LANG[UPDATING_LANG_FILES]}${COLOR_RESET}"
     set_language "$current_lang" "true"  # force_update=true
     printf "${COLOR_GREEN}${LANG[LANG_FILE_UPDATED]}${COLOR_RESET}\n" "${current_lang}.sh"
     echo -e ""
 
-	#Обновление модулей
+	#Update modules
     echo -e "${COLOR_YELLOW}${LANG[UPDATING_MODULES]}${COLOR_RESET}"
 
-    # Nginx-модули
+    # Nginx modules
     local nginx_modules=("install_panel_node" "install_panel" "install_node")
     for module in "${nginx_modules[@]}"; do
         local module_file="${DIR_REMNAWAVE}nginx/${module}.sh"
@@ -253,7 +278,7 @@ update_remnawave_reverse() {
         fi
     done
 
-    # Модули (общие)
+    # Modules (common)
     local common_modules=("add_node" "manage_panel" "selfsteal_templates")
     for module in "${common_modules[@]}"; do
         local module_file="${DIR_REMNAWAVE}modules/${module}.sh"
@@ -279,7 +304,7 @@ update_remnawave_reverse() {
 
     local temp_script="${DIR_REMNAWAVE}remnawave_reverse.tmp"
     
-    # Используем download_with_mirrors для надёжного скачивания скрипта
+    # Use download_with_mirrors for reliable script download
     if download_with_mirrors "$SCRIPT_URL" "$temp_script" "script"; then
         local downloaded_version=$(grep -m 1 "SCRIPT_VERSION=" "$temp_script" | sed -E 's/.*SCRIPT_VERSION="([^"]+)".*/\1/')
         if [ "$downloaded_version" != "$remote_version" ]; then
@@ -307,7 +332,7 @@ update_remnawave_reverse() {
         echo -e "${COLOR_YELLOW}${LANG[RELAUNCH_CMD]}${COLOR_GREEN} remnawave_reverse${COLOR_RESET}"
         exit 0
     else
-        # Запасной вариант: прямое скачивание через wget
+        # Fallback: direct download via wget
         if wget -q -O "$temp_script" "$SCRIPT_URL" 2>/dev/null; then
             local downloaded_version=$(grep -m 1 "SCRIPT_VERSION=" "$temp_script" | sed -E 's/.*SCRIPT_VERSION="([^"]+)".*/\1/')
             if [ "$downloaded_version" != "$remote_version" ]; then
@@ -414,7 +439,7 @@ install_script_if_missing() {
     if [ ! -f "${DIR_REMNAWAVE}remnawave_reverse" ] || [ ! -f "/usr/local/bin/remnawave_reverse" ]; then
         need_install=true
     else
-        # Проверяем установленную копию: своя ли она и актуальная ли
+        # Check the installed copy: is it ours and up-to-date
         local installed_version
         installed_version=$(grep -m 1 "SCRIPT_VERSION=" "${DIR_REMNAWAVE}remnawave_reverse" 2>/dev/null | sed -E 's/.*SCRIPT_VERSION="([^"]+)".*/\1/')
         local installed_url
@@ -422,7 +447,7 @@ install_script_if_missing() {
         local remote_version
         remote_version=$(curl -s --max-time 15 "$SCRIPT_URL" 2>/dev/null | grep -m 1 "SCRIPT_VERSION=" | sed -E 's/.*SCRIPT_VERSION="([^"]+)".*/\1/')
 
-        # Копия чужая (не из нашего репозитория) или устарела — переустанавливаем
+        # Copy is foreign (not from our repo) or outdated - reinstalling
         if [ -n "$remote_version" ] && { [ -z "$installed_version" ] || [ "$installed_version" != "$remote_version" ] || [ "$installed_url" != "$SCRIPT_URL" ]; }; then
             need_install=true
         fi
@@ -431,9 +456,9 @@ install_script_if_missing() {
     if [ "$need_install" = true ]; then
         mkdir -p "${DIR_REMNAWAVE}"
         
-        # Используем download_with_mirrors для надёжного скачивания
+        # Use download_with_mirrors for reliable download
         if ! download_with_mirrors "$SCRIPT_URL" "${DIR_REMNAWAVE}remnawave_reverse" "script"; then
-            # Запасной вариант: прямое скачивание
+            # Fallback: direct download
             if ! wget -q -O "${DIR_REMNAWAVE}remnawave_reverse" "$SCRIPT_URL" 2>/dev/null; then
                 exit 1
             fi
@@ -442,10 +467,10 @@ install_script_if_missing() {
         chmod +x "${DIR_REMNAWAVE}remnawave_reverse"
         ln -sf "${DIR_REMNAWAVE}remnawave_reverse" /usr/local/bin/remnawave_reverse
 
-        # ВАЖНО: удаляем старые модули с диска (могут остаться от апстрима или старых версий
-        # установщика). Иначе load_module (force_update=false) подхватит устаревшие модули,
-        # например старый шаблон .env без APP_SECRET или SECRET_KEY-заглушку ноды.
-        # После чистки load_module при следующей загрузке скачает свежие модули из репозитория.
+        # IMPORTANT: remove old modules from disk (may remain from upstream or older versions
+        # of the installer). Otherwise load_module (force_update=false) will pick up outdated modules,
+        # e.g. the old .env template without APP_SECRET or the node SECRET_KEY placeholder.
+        # After cleanup, load_module will download fresh modules from the repository on the next load.
         rm -rf "${DIR_REMNAWAVE}nginx" "${DIR_REMNAWAVE}modules" "${DIR_REMNAWAVE}api" "${DIR_REMNAWAVE}lang" 2>/dev/null
     fi
 
@@ -493,14 +518,14 @@ generate_password() {
     echo "$password"
 }
 
-#Актуальная версия панели из официального репозитория remnawave/panel
+#Current panel version from the official remnawave/panel repository
 PANEL_LATEST_VERSION=""
 get_panel_latest_version() {
     local ver=""
-    # GitHub releases (официальный репозиторий панели)
+    # GitHub releases (official panel repository)
     ver=$(curl -s --max-time 15 "https://api.github.com/repos/remnawave/panel/releases/latest" 2>/dev/null | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"v?([0-9.]+)".*/\1/')
     if [ -z "$ver" ]; then
-        # Запасной вариант: Docker Hub (официальные образы)
+        # Fallback: Docker Hub (official images)
         ver=$(curl -s --max-time 15 "https://hub.docker.com/v2/repositories/remnawave/backend/tags?page_size=10" 2>/dev/null | grep -oE '"name":"[0-9]+\.[0-9]+\.[0-9]+"' | head -1 | cut -d'"' -f4)
     fi
     echo "$ver"
@@ -510,7 +535,7 @@ check_panel_version() {
     PANEL_LATEST_VERSION=$(get_panel_latest_version)
 }
 
-#Отображение наличия обновления в меню
+#Display update availability in the menu
 check_update_status() {
     local TEMP_REMOTE_VERSION_FILE
     TEMP_REMOTE_VERSION_FILE=$(mktemp)
@@ -592,8 +617,8 @@ show_menu() {
     echo -e ""
 }
 
-# Выбор веб-сервера
-#Управление установкой компонентов Remnawave
+# Web server selection
+#Manage Remnawave component installation
 show_install_menu() {
     clear_screen
     echo -e ""
@@ -685,9 +710,9 @@ manage_install() {
             ;;
     esac
 }
-#Управление установкой компонентов Remnawave
+#Manage Remnawave component installation
 
-#Показать варианты переустановки
+#Show reinstall options
 show_reinstall_options() {
     echo -e ""
     echo -e "${COLOR_GREEN}${LANG[REINSTALL_TYPE_TITLE]}${COLOR_RESET}"
@@ -750,7 +775,7 @@ reinstall_remnawave() {
     docker system prune -a --volumes -f > /dev/null 2>&1 &
     spinner $! "${LANG[WAITING]}"
 }
-#Показать варианты переустановки
+#Show reinstall options
 
 add_cron_rule() {
     local rule="$1"
@@ -1080,7 +1105,7 @@ get_certificates() {
 
     case $CERT_METHOD in
         1)
-            # Cloudflare API (DNS-01, поддержка wildcard)
+            # Cloudflare API (DNS-01, wildcard support)
             reading "${LANG[ENTER_CF_TOKEN]}" CLOUDFLARE_API_KEY
             reading "${LANG[ENTER_CF_EMAIL]}" CLOUDFLARE_EMAIL
 
@@ -1112,7 +1137,7 @@ EOL
                 --elliptic-curve secp384r1
             ;;
         2)
-            # ACME HTTP-01 (без wildcard)
+            # ACME HTTP-01 (no wildcard)
             ufw allow 80/tcp comment 'HTTP for ACME challenge' > /dev/null 2>&1
 
             certbot certonly \
@@ -1182,7 +1207,7 @@ EOL
     fi
 }
 
-#Управление сертификатами
+#Manage certificates
 show_manage_certificates() {
     echo -e ""
     echo -e "${COLOR_GREEN}${LANG[MENU_9]}${COLOR_RESET}"
@@ -1526,7 +1551,7 @@ fix_letsencrypt_structure() {
     chmod 600 "$live_dir/privkey.pem"
     return 0
 }
-#Управление сертификатами
+#Manage certificates
 
 handle_certificates() {
     local -n domains_to_check_ref=$1
@@ -1688,7 +1713,7 @@ handle_certificates() {
     done
 }
 
-# Загрузчик модулей
+# Module loader
 load_module() {
     local module_name="$1"
     local module_type="${2:-modules}"
@@ -1704,7 +1729,7 @@ load_module() {
             cp "$module_file" "$backup_file"
         fi
 
-        # Используем download_with_mirrors для надёжного скачивания
+        # Use download_with_mirrors for reliable download
         if download_with_mirrors "$module_url" "$module_file" "module"; then
             rm -f "$backup_file"
         else
@@ -1745,7 +1770,7 @@ load_module() {
     fi
 }
 
-# Загрузчики модулей (обёртки для load_module)
+# Module loaders (wrappers for load_module)
 load_install_panel_node_module() { load_module "install_panel_node" "nginx" "${1:-false}"; }
 load_install_panel_module() { load_module "install_panel" "nginx" "${1:-false}"; }
 load_install_node_module() { load_module "install_node" "nginx" "${1:-false}"; }
@@ -1756,7 +1781,7 @@ load_selfsteal_templates_module() { load_module "selfsteal_templates" "modules" 
 
 log_entry
 
-# Поддерживается только русский язык — подключаем его напрямую без выбора
+# Language selection is handled by load_language()
 set_language ru
 
 check_root

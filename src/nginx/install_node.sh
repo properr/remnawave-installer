@@ -1,8 +1,8 @@
 #!/bin/bash
-# Модуль: установка только ноды
+# Module: node-only installation
 
 install_node_nginx() {
-    # Подключаем модуль шаблонов SelfSteal
+    # Load the SelfSteal templates module
     load_selfsteal_templates_module
 
     mkdir -p /opt/remnanode && cd /opt/remnanode
@@ -28,10 +28,10 @@ install_node_nginx() {
         fi
     done
 
-    # --- Секрет ноды ---
-    # Remnawave 3.x: оставляем пустым (Enter) -> установщик сам создаст ноду в панели
-    # и получит секрет через GET /api/keygen. Remnawave 2.x / ручной режим:
-    # вставляем Secret Key из карточки редактирования ноды.
+    # --- Node secret ---
+    # Remnawave 3.x: leave empty (Enter) -> the installer will create the node in the panel
+    # and get the secret via GET /api/keygen. Remnawave 2.x / manual mode:
+    # paste the Secret Key from the node edit card.
     echo -n "$(question "${LANG[NODE_SECRET_PROMPT]}")"
     CERTIFICATE=""
     while IFS= read -r line; do
@@ -45,7 +45,7 @@ install_node_nginx() {
     done
 
     if [ -n "$CERTIFICATE" ]; then
-        # Ручной режим (обратная совместимость с панелью 2.x) — API панели не трогаем
+        # Manual mode (backward compatibility with 2.x panel) - we do not touch the panel API
         echo -e "${COLOR_YELLOW}${LANG[NODE_MANUAL_SECRET_USED]}${COLOR_RESET}"
         echo -e "${COLOR_YELLOW}${LANG[CERT_CONFIRM]}${COLOR_RESET}"
         read confirm
@@ -57,8 +57,8 @@ install_node_nginx() {
         fi
         NODE_API_MODE="manual"
     else
-        # Автоматический режим (Remnawave 3.x) — нужны данные панели для API:
-        # либо API-токен (Bearer), либо логин/пароль суперадмина для автологина.
+        # Automatic mode (Remnawave 3.x) - panel credentials are needed for the API:
+        # either an API token (Bearer) or superadmin login/password for auto-login.
         NODE_API_MODE="auto"
         reading "${LANG[NODE_API_TOKEN_PROMPT]}" PANEL_API_TOKEN
         if [ -z "$PANEL_API_TOKEN" ]; then
@@ -185,7 +185,7 @@ server {
 }
 EOL
 
-    # Remnawave 3.x: автосоздание ноды в панели, автополучение секрета, добавление хоста
+    # Remnawave 3.x: auto-create the node in the panel, auto-get the secret, add the host
     if [ "$NODE_API_MODE" = "auto" ]; then
         node_api_setup
     fi
@@ -229,24 +229,24 @@ EOL
     done
 }
 
-# Автоматическая регистрация ноды в панели Remnawave 3.x:
-# 1) токен (введённый API-токен или автологин логином/паролем суперадмина);
-# 2) создание ноды через POST /api/nodes (Default-Profile + инбаунд, имя «Steal»);
-# 3) секрет ноды через GET /api/keygen -> подстановка SECRET_KEY в docker-compose;
-# 4) добавление selfsteal-домена в hosts через create_host (для serverNames/SNI).
+# Automatic node registration in the Remnawave 3.x panel:
+# 1) token (entered API token or auto-login with superadmin credentials);
+# 2) create the node via POST /api/nodes (Default-Profile + inbound, name "Steal");
+# 3) node secret via GET /api/keygen -> substitute SECRET_KEY in docker-compose;
+# 4) add the selfsteal domain to hosts via create_host (for serverNames/SNI).
 node_api_setup() {
     local domain_url="$PANEL_IP:3000"
     local api_base="http://$domain_url"
 
     echo -e "${COLOR_YELLOW}${LANG[NODE_API_STEPS]}${COLOR_RESET}"
 
-    # Проверяем доступность API панели (порт 3000)
+    # Check panel API availability (port 3000)
     if ! curl -s --max-time 10 -o /dev/null "$api_base/api/auth/status"; then
         echo -e "${COLOR_RED}$(printf "${LANG[NODE_PANEL_IP_REACH_FAIL]}" "$api_base")${COLOR_RESET}"
         exit 1
     fi
 
-    # Получаем токен: введённый API-токен либо автологин суперадмином
+    # Get token: entered API token or superadmin auto-login
     local token="$PANEL_API_TOKEN"
     if [ -z "$token" ]; then
         local login_response
@@ -259,7 +259,7 @@ node_api_setup() {
         echo -e "${COLOR_GREEN}${LANG[NODE_AUTH_LOGIN_SUCCESS]}${COLOR_RESET}"
     fi
 
-    # Проверяем валидность токена и доступ к API
+    # Validate the token and API access
     local test_response
     test_response=$(make_api_request "GET" "$api_base/api/config-profiles" "$token")
     if [ -z "$test_response" ] || ! echo "$test_response" | jq -e '.response.configProfiles' > /dev/null 2>&1; then
@@ -267,7 +267,7 @@ node_api_setup() {
         exit 1
     fi
 
-    # Локальный IP сервера — адрес, по которому панель будет подключаться к ноде
+    # Local server IP - the address the panel will use to connect to the node
     local node_address
     node_address=$(hostname -I 2>/dev/null | awk '{print $1}')
     if [ -z "$node_address" ]; then
@@ -275,10 +275,10 @@ node_api_setup() {
     fi
     echo -e "${COLOR_YELLOW}$(printf "${LANG[NODE_ADDRESS_INFO]}" "$node_address")${COLOR_RESET}"
 
-    # Берём Default-Profile панели и его инбаунды
+    # Get the panel Default-Profile and its inbounds
     local config_profile_uuid
     config_profile_uuid=$(get_config_profiles "$domain_url" "$token")
-    # get_config_profiles может выводить предупреждения в stdout — оставляем только UUID
+    # get_config_profiles may print warnings to stdout - keep only the UUID
     config_profile_uuid=$(echo "$config_profile_uuid" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1)
 
     local inbound_uuid=""
@@ -287,14 +287,14 @@ node_api_setup() {
     fi
 
     if [ -n "$config_profile_uuid" ] && [ -n "$inbound_uuid" ]; then
-        # Полноценная нода: профиль + инбаунд + хост
+        # Full node: profile + inbound + host
         echo -e "${COLOR_YELLOW}${LANG[CREATING_NODE]}${COLOR_RESET}"
         create_node "$domain_url" "$token" "$config_profile_uuid" "$inbound_uuid" "$node_address" "Steal"
 
         echo -e "${COLOR_YELLOW}${LANG[CREATE_HOST]}${COLOR_RESET}"
         create_host "$domain_url" "$token" "$inbound_uuid" "$SELFSTEAL_DOMAIN" "$config_profile_uuid"
     else
-        # Профиль или инбаунды не найдены — создаём ноду без привязки профиля
+        # Profile or inbounds not found - create a node without a profile binding
         if [ -n "$config_profile_uuid" ] && [ -z "$inbound_uuid" ]; then
             echo -e "${COLOR_YELLOW}${LANG[NODE_PROFILE_INBOUND_NOT_FOUND]}${COLOR_RESET}"
         else
@@ -306,7 +306,7 @@ node_api_setup() {
         make_api_request "POST" "$api_base/api/nodes" "$token" "$node_data" > /dev/null
     fi
 
-    # Получаем секрет ноды (подписанный сертификат панели) и прописываем в docker-compose
+    # Get the node secret (signed panel certificate) and write it to docker-compose
     local node_secret
     node_secret=$(get_node_secret_key "$domain_url" "$token")
     if [ -n "$node_secret" ] && [ "$node_secret" != "null" ]; then

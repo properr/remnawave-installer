@@ -1,5 +1,5 @@
 #!/bin/bash
-# Модуль: функции API Remnawave
+# Module: Remnawave API functions
 
 make_api_request() {
     local method=$1
@@ -270,7 +270,7 @@ get_profile_inbounds() {
         return 0
     fi
 
-    # Сначала пробуем взять инбаунды из списка профилей
+    # First try to get inbounds from the profiles list
     local profiles_response
     profiles_response=$(make_api_request "GET" "http://$domain_url/api/config-profiles" "$token")
 
@@ -278,7 +278,7 @@ get_profile_inbounds() {
     inbound_uuid=$(echo "$profiles_response" | jq -r --arg p "$profile_uuid" '.response.configProfiles[] | select(.uuid == $p) | .inbounds[0].uuid' 2>/dev/null)
 
     if [ -z "$inbound_uuid" ] || [ "$inbound_uuid" = "null" ]; then
-        # Фолбэк: отдельный эндпоинт инбаундов профиля
+        # Fallback: separate profile inbounds endpoint
         local inbounds_response
         inbounds_response=$(make_api_request "GET" "http://$domain_url/api/config-profiles/$profile_uuid/inbounds" "$token")
         inbound_uuid=$(echo "$inbounds_response" | jq -r '.response.inbounds[0].uuid // .response[0].uuid // ""' 2>/dev/null)

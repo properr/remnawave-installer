@@ -1,5 +1,5 @@
 #!/bin/bash
-# Модуль: управление панелью
+# Module: panel management
 
 show_manage_panel_menu() {
     echo -e ""
@@ -208,7 +208,7 @@ view_logs() {
     docker compose logs -f -t
 }
 
-#Управление доступом к панели
+#Panel access management
 show_panel_access() {
     echo -e ""
     echo -e "${COLOR_GREEN}${LANG[MENU_9]}${COLOR_RESET}"
