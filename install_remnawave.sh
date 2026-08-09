@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="26.8.7.14"
+SCRIPT_VERSION="26.8.9.8"
 UPDATE_AVAILABLE=false
 DIR_REMNAWAVE="/usr/local/remnawave_reverse/"
 LANG_FILE="${DIR_REMNAWAVE}selected_language"
@@ -222,7 +222,7 @@ update_remnawave_reverse() {
     printf "${COLOR_YELLOW}${LANG[UPDATE_AVAILABLE]}${COLOR_RESET}\n" "$remote_version" "$SCRIPT_VERSION"
     reading "${LANG[UPDATE_CONFIRM]}" confirm_update
 
-    if [[ "$confirm_update" != "y" && "$confirm_update" != "Y" ]]; then
+    if [[ "$confirm_update" != "y" && "$confirm_update" != "Y" && "$confirm_update" != "у" && "$confirm_update" != "У" ]]; then
         echo -e "${COLOR_YELLOW}${LANG[UPDATE_CANCELLED]}${COLOR_RESET}"
         return 0
     fi
@@ -357,7 +357,7 @@ remove_script() {
         1)
             echo -e "${COLOR_RED}${LANG[CONFIRM_REMOVE_SCRIPT]}${COLOR_RESET}"
             read confirm
-            if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+            if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "у" && "$confirm" != "У" ]]; then
                 echo -e "${COLOR_YELLOW}${LANG[EXIT]}${COLOR_RESET}"
                 return 0
             fi
@@ -371,7 +371,7 @@ remove_script() {
         2)
             echo -e "${COLOR_RED}${LANG[CONFIRM_REMOVE_ALL]}${COLOR_RESET}"
             read confirm
-            if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+            if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "у" && "$confirm" != "У" ]]; then
                 echo -e "${COLOR_YELLOW}${LANG[EXIT]}${COLOR_RESET}"
                 return 0
             fi
@@ -621,7 +621,7 @@ manage_install() {
             echo -e ""
             reading "${LANG[CONFIRM_CONTINUE]}" confirm_install
             
-            if [[ "$confirm_install" != "y" && "$confirm_install" != "Y" ]]; then
+            if [[ "$confirm_install" != "y" && "$confirm_install" != "Y" && "$confirm_install" != "у" && "$confirm_install" != "У" ]]; then
                 echo -e "${COLOR_YELLOW}${LANG[EXIT]}${COLOR_RESET}"
                 exit 0
             fi
@@ -909,7 +909,7 @@ check_domain() {
             echo -e "${COLOR_RED}${LANG[CHECK_DOMAIN_IP_FAIL]}${COLOR_RESET}"
             printf "${COLOR_YELLOW}${LANG[CHECK_DOMAIN_IP_FAIL_INSTRUCTION]}${COLOR_RESET}\n" "$domain" "$server_ip"
             reading "${LANG[CONFIRM_PROMPT]}" confirm
-            if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+            if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "у" && "$confirm" != "У" ]]; then
                 return 2
             fi
         fi

@@ -14,7 +14,7 @@ add_node_to_panel() {
     read confirm
     echo
 
-    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "у" && "$confirm" != "У" ]]; then
         echo -e "${COLOR_YELLOW}${LANG[EXIT]}${COLOR_RESET}"
         exit 0
     fi

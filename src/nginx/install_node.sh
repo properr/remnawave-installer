@@ -51,7 +51,7 @@ install_node_nginx() {
         read confirm
         echo
 
-        if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+        if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "у" && "$confirm" != "У" ]]; then
             echo -e "${COLOR_RED}${LANG[ABORT_MESSAGE]}${COLOR_RESET}"
             exit 1
         fi
