@@ -124,12 +124,6 @@ src/lang/              — language files (en, ru, zh-CN)
 
 ---
 
-## ☁️ Support the project
-
-Do you like the installer? The best support is renting a server via our partner link: **[aeza.ru](https://aeza.ru/?ref=446743)** — affordable VPS worldwide, perfect for the Remnawave panel and nodes.
-
----
-
 ---
 
 # Remnawave Reverse Proxy
@@ -247,12 +241,6 @@ src/lang/              — языковые файлы (en, ru, zh-CN)
 
 > [!CAUTION]
 > Инструмент предназначен для администрирования собственных серверов. Используйте на свой риск.
-
----
-
-## ☁️ Поддержать проект
-
-Понравился установщик? Лучшая поддержка — аренда сервера по нашей партнёрской ссылке: **[aeza.ru](https://aeza.ru/?ref=446743)** — недорогие VPS по всему миру, идеальны для панели и нод Remnawave.
 
 ---
 
@@ -378,4 +366,3 @@ src/lang/              — 语言文件（en, ru, zh-CN）
 
 ## ☁️ 支持项目
 
-喜欢这个安装程序吗？最好的支持是通过我们的合作伙伴链接租用服务器：**[aeza.ru](https://aeza.ru/?ref=446743)** — 全球低价 VPS，非常适合 Remnawave 面板和节点。

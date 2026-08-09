@@ -154,7 +154,6 @@ LANG[STARTING_NODE]="Starting node"
 LANG[STOPPING_REMNAWAVE]="Stopping panel and node"
 LANG[IMAGES_DETECTED]="New images detected, restarting containers..."
 #End of menu
-LANG[AEZA_PROMO]="Need a server for the panel or node? Rent on Aeza: https://aeza.ru/?ref=446743"
 LANG[INSTALL_COMPLETE]="                INSTALLATION COMPLETE!"
 LANG[PANEL_ACCESS]="Panel is available at:"
 LANG[PANEL_ACCESS_PROMPT]="Select an action (0-2):"

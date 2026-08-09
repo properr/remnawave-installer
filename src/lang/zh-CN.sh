@@ -154,7 +154,6 @@ LANG[STARTING_NODE]="正在启动节点"
 LANG[STOPPING_REMNAWAVE]="正在停止面板和节点"
 LANG[IMAGES_DETECTED]="检测到新镜像，正在重启容器..."
 #End of menu
-LANG[AEZA_PROMO]="需要面板或节点服务器？在 Aeza 租用：https://aeza.ru/?ref=446743"
 LANG[INSTALL_COMPLETE]="                安装完成！"
 LANG[PANEL_ACCESS]="面板可通过以下地址访问："
 LANG[PANEL_ACCESS_PROMPT]="请选择操作 (0-2)："
