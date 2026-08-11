@@ -36,7 +36,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/properr/remnawave-installer/re
 3. **Пользователь** — создаётся через UI/API:
    ```bash
    curl -sk -X POST https://panel.example.com/api/users -H "Authorization: Bearer <API_TOKEN>" -H "Content-Type: application/json" \
-     -d '{"username":"BadSem","status":"ACTIVE","expireAt":"2099-01-01T00:00:00.000Z"}'
+     -d '{"username":"Admin","status":"ACTIVE","expireAt":"2099-01-01T00:00:00.000Z"}'
    ```
    Подписка: `https://sub.example.com/<shortUuid>`
 
